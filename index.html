@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curiosidades de São Paulo | SP Explorer</title>
+    <style>
+        /* ==========================================================================
+           1. DESIGN TOKENS & RESET
+           ========================================================================== */
+        :root {
+            --primary: #e63946;
+            --primary-hover: #d62828;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Background com gradiente sutil */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 15% 15%, rgba(230, 57, 70, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* ==========================================================================
+           2. HEADER & FILTROS
+           ========================================================================== */
+        header {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            background: rgba(230, 57, 70, 0.2);
+            color: var(--primary);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(230, 57, 70, 0.3);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* ==========================================================================
+           3. GRID DE CURIOSIDADES
+           ========================================================================== */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-main);
+        }
+
+        .card-snippet {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           4. MODAL
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            transform: scale(0.9);
+            transition: var(--transition);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+
+        .modal-body p {
+            margin-top: 1rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* ==========================================================================
+           5. FOOTER
+           ========================================================================== */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="badge">Terra da Garoa</span>
+        <h1>Curiosidades de São Paulo</h1>
+        <p class="subtitle">Descubra fatos fascinantes sobre a maior metrópole da América Latina.</p>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Pesquisar curiosidade..." aria-label="Pesquisar curiosidade">
+            </div>
+            <div class="filters" id="categoryFilters">
+                <button class="filter-btn active" data-category="all">Todas</button>
+                <button class="filter-btn" data-category="gastronomia">Gastronomia</button>
+                <button class="filter-btn" data-category="historia">História</button>
+                <button class="filter-btn" data-category="cultura">Cultura</button>
+                <button class="filter-btn" data-category="urbanismo">Urbanismo</button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="cards-grid" id="factsGrid"></div>
+    </main>
+
+    <!-- Modal para Detalhes -->
+    <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true">
+            <button class="close-btn" id="closeModal" aria-label="Fechar modal">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo injetado via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; SP Explorer — Desenvolvido com HTML, CSS e JS puro.</p>
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           ESTADO E DADOS DA APLICAÇÃO
+           ========================================================================== */
+        const factsData = [
+            {
+                id: 1,
+                title: "A Capital Mundial da Pizza",
+                category: "gastronomia",
+                snippet: "São Paulo produz cerca de 1 milhão de pizzas por dia, ficando atrás apenas de Nova York.",
+                details: "A relação de São Paulo com a pizza vem da forte imigração italiana no final do século XIX. Hoje, a cidade conta com mais de 6 mil pizzarias registradas. O dia 10 de julho é oficialmente comemorado como o Dia da Pizza na capital paulista!"
+            },
+            {
+                id: 2,
+                title: "Maior Comunidade Japonesa",
+                category: "cultura",
+                snippet: "O bairro da Liberdade abriga a maior comunidade japonesa fora do Japão no mundo.",
+                details: "A imigração começou em 1908 com a chegada do navio Kasato Maru. Hoje, o bairro da Liberdade é um polo cultural e turístico vibrante, famoso por sua arquitetura tradicional, lanternas vermelhas (Suzuran) e feiras gastronômicas."
+            },
+            {
+                id: 3,
+                title: "O Maior Heliciclo Urbano",
+                category: "urbanismo",
+                snippet: "SP tem a 2ª maior frota de helicópteros do mundo, atrás apenas de Nova York.",
+                details: "Com o trânsito Intenso da metrópole, executivos e empresários adotaram o transporte aéreo. A cidade possui mais de 200 helipontos registrados e um tráfego constante de mais de 500 aeronaves conectando aeroportos e centros financeiro como a Faria Lima."
+            },
+            {
+                id: 4,
+                title: "Café Paga o Banespa",
+                category: "historia",
+                snippet: "O famoso Edifício Altino Arantes foi inspirado no Empire State Building de Nova York.",
+                details: "Inaugurado em 1947 para ser o prédio do Banco do Estado de São Paulo, o Edifício Banespa (hoje Farol Santander) foi por muitos anos a maior estrutura de concreto armado do mundo. Seu topo oferece uma vista 360º incrível da cidade."
+            },
+            {
+                id: 5,
+                title: "Um Rio Subterrâneo Oculto",
+                category: "urbanismo",
+                snippet: "Existem mais de 300 rios e riachos canalizados sob o asfalto paulistano.",
+                details: "Avenida Paulista, Anhangabaú e a Avenida 23 de Maio cobrem rios que antigamente cortavam a paisagem natural. O Rio Saracura, por exemplo, corre inteiramente debaixo do bairro do Bixiga e da Avenida 9 de Julho."
+            },
+            {
+                id: 6,
+                title: "A Capela do Prédio da Light",
+                category: "cultura",
+                snippet: "Um dos teatros mais tradicionais da cidade fica dentro do antigo prédio de energia.",
+                details: "O Theatro Municipal de São Paulo, inaugurado em 1911, foi inspirado na Ópera de Paris. Sua construção atendeu aos desejos da elite do café, que exigia uma casa de espetáculos à altura dos padrões europeus da época."
+            }
+        ];
+
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        /* ==========================================================================
+           ELEMENTOS DO DOM
+           ========================================================================== */
+        const factsGrid = document.getElementById('factsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilters = document.getElementById('categoryFilters');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+
+        /* ==========================================================================
+           FUNÇÕES DE RENDERIZAÇÃO
+           ========================================================================== */
+        function renderCards() {
+            const filteredFacts = factsData.filter(fact => {
+                const matchesCategory = currentCategory === 'all' || fact.category === currentCategory;
+                const matchesSearch = fact.title.toLowerCase().includes(searchQuery) || 
+                                      fact.snippet.toLowerCase().includes(searchQuery);
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filteredFacts.length === 0) {
+                factsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p>Nenhuma curiosidade encontrada com os termos buscados.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            factsGrid.innerHTML = filteredFacts.map(fact => `
+                <article class="card" onclick="openModal(${fact.id})">
+                    <div>
+                        <span class="card-category">${fact.category}</span>
+                        <h2 class="card-title">${fact.title}</h2>
+                        <p class="card-snippet">${fact.snippet}</p>
+                    </div>
+                    <div class="card-action">
+                        <span>Saber mais</span> &rarr;
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        /* ==========================================================================
+           GERENCIAMENTO DO MODAL
+           ========================================================================== */
+        window.openModal = function(id) {
+            const fact = factsData.find(f => f.id === id);
+            if (!fact) return;
+
+            modalBody.innerHTML = `
+                <span class="card-category">${fact.category}</span>
+                <h2 class="card-title" style="font-size: 1.75rem; margin-top: 0.25rem;">${fact.title}</h2>
+                <p>${fact.details}</p>
+            `;
+
+            modalOverlay.classList.add('active');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden'; // Impede o scroll do fundo
+        };
+
+        function hideModal() {
+            modalOverlay.classList.remove('active');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        /* ==========================================================================
+           EVENT LISTENERS
+           ========================================================================== */
+        // Pesquisa em tempo real
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase().trim();
+            renderCards();
+        });
+
+        // Filtro por Categoria
+        categoryFilters.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('filter-btn')) return;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+
+            currentCategory = e.target.dataset.category;
+            renderCards();
+        });
+
+        // Fechar Modal
+        closeModal.addEventListener('click', hideModal);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) hideModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                hideModal();
+            }
+        });
+
+        /* ==========================================================================
+           INICIALIZAÇÃO
+           ========================================================================== */
+        renderCards();
+    </script>
+</body>
+</html>
