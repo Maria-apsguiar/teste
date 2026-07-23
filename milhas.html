@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guia de Milhas & Pontos Brasil | Guia Definitivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CSS RESET & VARIABLES (Design System)
+       ========================================================================== */
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: rgba(22, 31, 49, 0.7);
+      --bg-card-hover: rgba(30, 42, 68, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.25);
+      --accent: #10b981;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --gold: #f59e0b;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+    }
+
+    /* Background Blur FX */
+    .glow-bg {
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--primary-glow) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* ==========================================================================
+       HEADER & HERO
+       ========================================================================== */
+    header {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 20px 20px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, var(--text-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* ==========================================================================
+       TOOLBAR & FILTERS
+       ========================================================================== */
+    .toolbar-container {
+      max-width: 1200px;
+      margin: 30px auto 20px auto;
+      padding: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+      min-width: 240px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px 10px 38px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      fill: var(--text-dim);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ==========================================================================
+       MAIN CONTENT (CARDS GRID)
+       ========================================================================== */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      background: var(--bg-card-hover);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .program-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-placeholder {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .program-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .program-category {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .score-badge {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--gold);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .card-body {
+      margin-bottom: 20px;
+    }
+
+    .card-description {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 16px;
+      min-height: 44px;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature-item {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-item svg {
+      fill: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .CPM-info {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .CPM-info strong {
+      color: var(--text-main);
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .btn-detail {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-detail:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       CALCULATOR SECTION
+       ========================================================================== */
+    .calculator-section {
+      max-width: 1200px;
+      margin: 60px auto 0 auto;
+      padding: 0 20px;
+    }
+
+    .calc-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .calc-card { grid-template-columns: 1fr; }
+    }
+
+    .calc-title h2 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .calc-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .calc-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group select {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .calc-result {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .calc-result span {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .calc-result h3 {
+      font-size: 1.8rem;
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       MODAL SYSTEM
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: #111827;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 600px;
+      width: 100%;
+      padding: 28px;
+      position: relative;
+      transform: scale(0.95);
+      transition: var(--transition);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-body p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 14px;
+    }
+
+    .modal-section-title {
+      font-size: 1rem;
+      color: var(--primary);
+      font-weight: 700;
+      margin: 18px 0 8px 0;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-bg"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="badge">✈️ Atualizado 2026</div>
+    <h1>Melhores Programas de Milhas do Brasil</h1>
+    <p>Compare os principais ecossistemas de pontos e milhas para emitir passagens baratas, viajar de executiva ou fazer renda extra.</p>
+  </header>
+
+  <!-- CONTROLES & FILTROS -->
+  <div class="toolbar-container">
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="filterPrograms('all', this)">Todos</button>
+      <button class="tab-btn" onclick="filterPrograms('aerea', this)">Aéreos</button>
+      <button class="tab-btn" onclick="filterPrograms('banco', this)">Bancos & Hubs</button>
+    </div>
+
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar por programa ou benefício..." oninput="handleSearch()" />
+    </div>
+  </div>
+
+  <!-- GRID DE PROGRAMAS -->
+  <main>
+    <div class="grid" id="programsGrid">
+      <!-- Injetado dinamicamente via JS -->
+    </div>
+  </main>
+
+  <!-- CALCULADORA DE VALOR -->
+  <section class="calculator-section">
+    <div class="calc-card">
+      <div class="calc-title">
+        <h2>Simulador de Valor (CPM)</h2>
+        <p>Descubra o valor estimado em dinheiro (R$) que suas milhas acumulam com base no valor médio de mercado do milheiro (1.000 milhas).</p>
+      </div>
+      <div class="calc-form">
+        <div class="form-group">
+          <label for="calcProgram">Selecione o Programa</label>
+          <select id="calcProgram" onchange="calculateValue()">
+            <option value="27">LATAM Pass (Média R$ 27 / milheiro)</option>
+            <option value="35">Livelo (Média R$ 35 / milheiro)</option>
+            <option value="17.5">Smiles (Média R$ 17,50 / milheiro)</option>
+            <option value="21">Azul Fidelidade (Média R$ 21 / milheiro)</option>
+            <option value="33">Esfera (Média R$ 33 / milheiro)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="calcQuantity">Quantidade de Milhas / Pontos</label>
+          <input type="number" id="calcQuantity" value="50000" step="1000" oninput="calculateValue()" />
+        </div>
+        <div class="calc-result">
+          <span>Valor Estimado de Mercado</span>
+          <h3 id="calcResultDisplay">R$ 1.350,00</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE DETALHES -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-header" id="modalHeader"></div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Guia de Milhas Brasil — Construído para fins demonstrativos e educacionais.</p>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    /* ==========================================================================
+       DATA SOURCE (Programas de Milhas)
+       ========================================================================== */
+    const programsData = [
+      {
+        id: 'latam-pass',
+        name: 'LATAM Pass',
+        category: 'aerea',
+        color: '#e10a0a',
+        rating: '4.8 ★',
+        description: 'Eleito o programa favorito dos brasileiros. Destaca-se pelas tabelas fixas em parceiras e forte malha internacional.',
+        features: [
+          'Validade ilimitada de milhas ao voar com a LATAM',
+          'Emissão com tabela fixa em parceiras da aliança',
+          'Cartão LATAM Pass Itaú acelera o acúmulo'
+        ],
+        cpmAverage: 'R$ 25 - R$ 28',
+        details: {
+          transferPartners: 'Livelo, Esfera, Itaú, Banco do Brasil, Bradesco, Caixa.',
+          bestFor: 'Voos internacionais para EUA, Europa e América do Sul.',
+          proTip: 'Aproveite campanhas de transferência bonificada (30% a 50%) entre bancos e o LATAM Pass.'
+        }
+      },
+      {
+        id: 'livelo',
+        name: 'Livelo',
+        category: 'banco',
+        color: '#ed008c',
+        rating: '4.9 ★',
+        description: 'O maior ecossistema de pontos do Brasil. Flexibilidade total para acumular em compras do dia a dia e transferir.',
+        features: [
+          'Pontos que não expiram em planos de clube',
+          'Transferência para LATAM, Smiles, Azul, TAP e mais',
+          'Acúmulo agressivo em compras online (até 10 pts/R$)'
+        ],
+        cpmAverage: 'R$ 32 - R$ 35',
+        details: {
+          transferPartners: 'Smiles, LATAM Pass, Azul Fidelidade, TAP Miles&Go, Iberia Plus, Flying Blue.',
+          bestFor: 'Quem quer acumular pontos com gastos diários sem ficar preso a uma única cia aérea.',
+          proTip: 'Nunca transfira seus pontos sem uma promoção com bônus de transferência (mínimo de 40% a 80%).'
+        }
+      },
+      {
+        id: 'smiles',
+        name: 'Smiles (GOL)',
+        category: 'aerea',
+        color: '#ff6600',
+        rating: '4.5 ★',
+        description: 'Excelente para voos nacionais e com ampla rede de cias internacionais parceiras como American Airlines e Air France.',
+        features: [
+          'Viaje Fácil: reserve a passagem e pague até 60 dias antes',
+          'Parceria com mais de 50 companhias aéreas globais',
+          'Clube Smiles com ótimas promoções de adesão'
+        ],
+        cpmAverage: 'R$ 16 - R$ 18',
+        details: {
+          transferPartners: 'Todos os principais bancos brasileiros (Itaú, Bradesco, BB, Santander, C6, etc).',
+          bestFor: 'Pessoas que buscam facilidade na emissão de passagens nacionais e reservas de hotéis.',
+          proTip: 'O serviço "Viaje Fácil" permite emitir a passagem sem ter o saldo total no momento da reserva.'
+        }
+      },
+      {
+        id: 'azul-fidelidade',
+        name: 'Azul Fidelidade',
+        category: 'aerea',
+        color: '#0099ff',
+        rating: '4.6 ★',
+        description: 'Oferece o melhor serviço de bordo nacional e benefícios exclusivos para clientes de categorias elevadas.',
+        features: [
+          'Benefício do Passe de Acompanhante (Companion Pass)',
+          'Excelente cobertura regional de cidades no Brasil',
+          'Integração com cartão Azul Itaú Visa Infinite'
+        ],
+        cpmAverage: 'R$ 20 - R$ 22',
+        details: {
+          transferPartners: 'Livelo, Esfera, Itaú, C6 Bank, Safra.',
+          bestFor: 'Quem viaja com frequência para cidades do interior do Brasil e voos diretos para os EUA/Europa.',
+          proTip: 'Atingir o nível máximo com o cartão co-branded dá direito a passagem grátis para acompanhante em voos internacionais.'
+        }
+      },
+      {
+        id: 'esfera',
+        name: 'Esfera (Santander)',
+        category: 'banco',
+        color: '#ec1c24',
+        rating: '4.7 ★',
+        description: 'Programa do Santander aberto a todos os CPFs. Excelente para compra de pontos com desconto e transferências.',
+        features: [
+          'Compra de pontos frequente com até 50% de desconto',
+          'Clube Esfera com benefícios multiplicadores',
+          'Descontos diretos na fatura do cartão (Cashback)'
+        ],
+        cpmAverage: 'R$ 30 - R$ 33',
+        details: {
+          transferPartners: 'Smiles, LATAM Pass, Azul Fidelidade, Iberia Plus.',
+          bestFor: 'Clientes Santander e estrategistas de milhas que compram pontos com desconto.',
+          proTip: 'Combine a compra de pontos Esfera com 50% de desconto e transfira em uma promoção bonificada de 100% para duplicar seus pontos.'
+        }
+      }
+    ];
+
+    /* ==========================================================================
+       RENDER & INTERACTIVE LOGIC
+       ========================================================================== */
+    const gridEl = document.getElementById('programsGrid');
+    let currentCategory = 'all';
+
+    function renderCards(data) {
+      gridEl.innerHTML = '';
+
+      if (data.length === 0) {
+        gridEl.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Nenhum programa encontrado com os termos pesquisados.</p>`;
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div>
+            <div class="card-header">
+              <div class="program-info">
+                <div class="logo-placeholder" style="background-color: ${item.color}">${item.name.substring(0, 2).toUpperCase()}</div>
+                <div>
+                  <div class="program-title">${item.name}</div>
+                  <div class="program-category">${item.category === 'aerea' ? 'Cia Aérea' : 'Pontos & Banco'}</div>
+                </div>
+              </div>
+              <div class="score-badge">${item.rating}</div>
+            </div>
+
+            <div class="card-body">
+              <p class="card-description">${item.description}</p>
+              <ul class="feature-list">
+                ${item.features.map(f => `
+                  <li class="feature-item">
+                    <svg width="14" height="14" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    ${f}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="CPM-info">
+              Valor Médio (CPM)
+              <strong>${item.cpmAverage}</strong>
+            </div>
+            <button class="btn-detail" onclick="openModal('${item.id}')">Ver Detalhes</button>
+          </div>
+        `;
+        gridEl.appendChild(card);
+      });
+    }
+
+    // Filtros por Categoria
+    function filterPrograms(category, element) {
+      currentCategory = category;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      applyFilters();
+    }
+
+    // Busca por Texto
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = programsData.filter(item => {
+        const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+        const matchesQuery = item.name.toLowerCase().includes(query) || 
+                             item.description.toLowerCase().includes(query) ||
+                             item.features.some(f => f.toLowerCase().includes(query));
+        return matchesCategory && matchesQuery;
+      });
+      renderCards(filtered);
+    }
+
+    // Calculadora CPM
+    function calculateValue() {
+      const cpm = parseFloat(document.getElementById('calcProgram').value);
+      const qty = parseFloat(document.getElementById('calcQuantity').value) || 0;
+      const total = (qty / 1000) * cpm;
+
+      const formatted = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('calcResultDisplay').innerText = formatted;
+    }
+
+    // Modal Manager
+    function openModal(id) {
+      const item = programsData.find(p => p.id === id);
+      if (!item) return;
+
+      document.getElementById('modalHeader').innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div class="logo-placeholder" style="background-color: ${item.color}">${item.name.substring(0,2)}</div>
+          <div>
+            <h2 style="color: #fff;">${item.name}</h2>
+            <span style="color: var(--text-muted); font-size: 0.85rem;">Avaliação Geral: ${item.rating}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modalBody').innerHTML = `
+        <p>${item.description}</p>
+        
+        <div class="modal-section-title">Parceiros Principais de Transferência</div>
+        <p>${item.details.transferPartners}</p>
+
+        <div class="modal-section-title">Para quem é recomendado?</div>
+        <p>${item.details.bestFor}</p>
+
+        <div class="modal-section-title">💡 Dica Estratégica de Sênior</div>
+        <p style="background: rgba(59, 130, 246, 0.1); border-left: 3px solid var(--primary); padding: 10px 14px; border-radius: 0 8px 8px 0; color: #fff;">
+          ${item.details.proTip}
+        </p>
+      `;
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    // Fechar modal ao clicar fora
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'modalOverlay') closeModal();
+    });
+
+    // Inicialização
+    renderCards(programsData);
+    calculateValue();
+  </script>
+</body>
+</html>
